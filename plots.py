@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def boxplot_dataframe(
+def boxplot_groupby_category(
     df,
     tcol,
     gcol,
@@ -10,7 +10,8 @@ def boxplot_dataframe(
     outlier="",
     width=0,
     height=0,
-    grid=False
+    grid=False,
+    sort_labels=False
 ):
     """
     Output values as a boxplot from pandas DataFrame.
@@ -37,6 +38,8 @@ def boxplot_dataframe(
         Height of plot.
     grid : bool
         If True, grid lines appear.
+    sort_labels : bool
+        If True, labels are sorted.
     """
     # formating dataframe
     df = df[[gcol,tcol]]
@@ -49,6 +52,8 @@ def boxplot_dataframe(
         labels = [nastr]
     else:
         labels = []
+    if sort_labels:
+        elabels.sort()
     labels.extend(elabels)
     
     # boxplot
@@ -73,7 +78,7 @@ def boxplot_dataframe(
     ax.grid(grid)
     plt.show()
 
-def boxplot_with_barplot_dataframe(
+def boxplot_with_barplot_groupby_category(
     df,
     tcol,
     gcol,
@@ -86,7 +91,8 @@ def boxplot_with_barplot_dataframe(
     wspace=0.05,
     grid_left=False,
     grid_right=False,
-    ratio=0.8
+    ratio=0.8,
+    sort_labels=False
 ):
     """
     Output values as a boxplot from pandas DataFrame.
@@ -119,6 +125,8 @@ def boxplot_with_barplot_dataframe(
         If True, grid lines of the right plot appear.
     ratio : float, 0~1
         Ratio where the left plot occupying.
+    sort_labels : bool
+        If True, labels are sorted.
     """
     # formating dataframe
     df = df[[gcol,tcol]]
@@ -131,6 +139,8 @@ def boxplot_with_barplot_dataframe(
         labels = [nastr]
     else:
         labels = []
+    if sort_labels:
+        elabels.sort()
     labels.extend(elabels)
     
     # plot
