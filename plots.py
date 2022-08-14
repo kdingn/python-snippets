@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def boxplot_groupby_category(
+def plot_box_cat(
     df,
     tcol,
     gcol,
@@ -78,7 +78,8 @@ def boxplot_groupby_category(
     ax.grid(grid)
     plt.show()
 
-def boxplot_with_barplot_groupby_category(
+
+def plot_boxbar_cat(
     df,
     tcol,
     gcol,
@@ -95,7 +96,7 @@ def boxplot_with_barplot_groupby_category(
     sort_labels=False
 ):
     """
-    Output values as a boxplot from pandas DataFrame.
+    Output values as boxplot and barplot from pandas DataFrame.
     
     Parameters
     ----------
@@ -183,3 +184,181 @@ def boxplot_with_barplot_groupby_category(
     ax[1].tick_params(labelleft=False)
     ax[1].grid(grid_right)
     plt.show()
+
+
+def plot_box_num(
+    df,
+    tcol,
+    gcol,
+    nastr="value is N/A",
+    vmin=0,
+    vmax=0,
+    outlier="",
+    width=0,
+    height=0,
+    grid=False,
+    sort_labels=True,
+    bins=10
+):
+    """
+    Output values as a boxplot from pandas DataFrame.
+    
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Dataframe for boxplot.
+    tcol : str
+        Target column name. Target is supposed to be float.
+    gcol : str
+        Column for group-by key. Group-key is supposed to be strings.
+    nastr : str
+        Key name for N/A value.
+    vmin : float
+        Min value for boxplot.
+    vmax : float
+        Max value for boxplot.
+    outlier : str
+        Outlier format.
+    width : float
+        Width of plot.
+    height : float
+        Height of plot.
+    grid : bool
+        If True, grid lines appear.
+    sort_labels : bool
+        If True, labels are sorted.
+    bins : int
+        The number of bins for quantile cutting.
+    """
+    # formating dataframe
+    df = df[[gcol,tcol]].copy()
+    
+    # creating bins from numeric variable
+    ccol = gcol + "_bin"
+    df[ccol] = pd.qcut(df[gcol],bins).astype(str)
+
+    # sort bins
+    uniques = df[ccol].unique()
+    dfsort = pd.DataFrame({
+        ccol:uniques,
+        f"lower_boundary":list(map(lambda x : x[1:].split(",")[0], uniques))
+    })
+    dfsort["lower_boundary"] = \
+    dfsort["lower_boundary"].replace(
+        "an",
+        str(float(dfsort["lower_boundary"].min())-1)
+    ).apply(lambda x : float(x))
+    dfsort = dfsort.sort_values("lower_boundary").reset_index(drop=True)
+    dfsort["bins"] = pd.Series(dfsort.index).apply(lambda x : "bin"+str(x).zfill(2))
+    df = df.merge(dfsort[[ccol,"bins"]],on=ccol)
+    df[ccol] = df["bins"] + "_" + df[ccol].replace("nan",np.nan)
+
+    # plot
+    plot_box_cat(
+        df,
+        tcol,
+        ccol,
+        nastr=nastr,
+        vmin=vmin,
+        vmax=vmax,
+        outlier=outlier,
+        width=width,
+        height=height,
+        grid=grid,
+        sort_labels=sort_labels
+    )
+
+
+def plot_boxbar_num(
+    df,
+    tcol,
+    gcol,
+    nastr="value is N/A",
+    vmin=0,
+    vmax=0,
+    outlier="",
+    width=0,
+    height=0,
+    wspace=0.05,
+    grid_left=False,
+    grid_right=False,
+    ratio=0.8,
+    sort_labels=True,
+    bins=10
+):
+    """
+    Output values as boxplot and barplot from pandas DataFrame.
+    
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Dataframe for boxplot.
+    tcol : str
+        Target column name. The value is supposed to be float and non-null.
+    gcol : numeric
+        Column for group-by key. The value is supposed to be numeric.
+    nastr : str
+        Key name for N/A value.
+    vmin : float
+        Min value for boxplot.
+    vmax : float
+        Max value for boxplot.
+    outlier : str
+        Outlier format.
+    width : float
+        Width of plot.
+    height : float
+        Height of plot.
+    wspace : float
+        Space for the plots.
+    grid_left : bool
+        If True, grid lines of the left plot appear.
+    grid_right : bool
+        If True, grid lines of the right plot appear.
+    ratio : float, 0~1
+        Ratio where the left plot occupying.
+    sort_labels : bool
+        If True, labels are sorted.
+    bins : int
+        The number of bins for quantile cutting.
+    """
+    # formating dataframe
+    df = df[[gcol,tcol]].copy()
+    
+    # creating bins from numeric variable
+    ccol = gcol + "_bin"
+    df[ccol] = pd.qcut(df[gcol],bins).astype(str)
+
+    # sort bins
+    uniques = df[ccol].unique()
+    dfsort = pd.DataFrame({
+        ccol:uniques,
+        f"lower_boundary":list(map(lambda x : x[1:].split(",")[0], uniques))
+    })
+    dfsort["lower_boundary"] = \
+    dfsort["lower_boundary"].replace(
+        "an",
+        str(float(dfsort["lower_boundary"].min())-1)
+    ).apply(lambda x : float(x))
+    dfsort = dfsort.sort_values("lower_boundary").reset_index(drop=True)
+    dfsort["bins"] = pd.Series(dfsort.index).apply(lambda x : "bin"+str(x).zfill(2))
+    df = df.merge(dfsort[[ccol,"bins"]],on=ccol)
+    df[ccol] = df["bins"] + "_" + df[ccol].replace("nan",np.nan)
+
+    # plot
+    plot_boxbar_cat(
+        df,
+        tcol,
+        ccol,
+        nastr=nastr,
+        vmin=vmin,
+        vmax=vmax,
+        outlier=outlier,
+        width=width,
+        height=height,
+        wspace=wspace,
+        grid_left=grid_left,
+        grid_right=grid_right,
+        ratio=ratio,
+        sort_labels=sort_labels
+    )
