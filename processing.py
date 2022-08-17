@@ -1,6 +1,6 @@
 import numpy as np
 
-def commaConcatenatedString_to_list(df,col):
+def commaConcatenatedStringColumn_to_elementList(df,col):
     """
     Creating list of category elements
     from comma concatenated string column in dataframe.
