@@ -81,9 +81,5 @@ def impute_by_group(
     dfnull[impute_col] = dfnull[f"{impute_col}_impute"]
     dfnull = dfnull.drop(f"{impute_col}_impute",axis=1)
 
-    print(dfnotnull.shape)
-    print(dfnull.shape)
-    print()
-
     df = pd.concat([dfnotnull,dfnull]).reset_index(drop=True)
     return df
