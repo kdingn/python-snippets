@@ -34,6 +34,8 @@ def impute_by_group(
 ):
     """
     Impute by most frequent values in the same groups.
+    The column value for imputation is supposed to be categorical.
+    (not numerical)
     
     Parameters
     ----------
