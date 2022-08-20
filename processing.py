@@ -90,7 +90,7 @@ def commaConcatenatedStringColumn_to_elementList(df,col):
 
 
 def impute_cat_by_groupkey(
-    x_train,
+    df,
     impute_col,
     groupkey,
     SEED=2022,
@@ -103,7 +103,7 @@ def impute_cat_by_groupkey(
     
     Parameters
     ----------
-    x_train : pandas.DataFrame
+    df : pandas.DataFrame
         Dataframe for applying this function.
     impute_col : string
         Column name for imputing.
@@ -123,7 +123,7 @@ def impute_cat_by_groupkey(
     ## prepare return df
     dfreturn = pd.DataFrame()
     ## keep index
-    x_train = x_train.reset_index()
+    x_train = df.reset_index().copy()
     ## kfold
     kf = KFold(n_splits=n_split,shuffle=True,random_state=SEED)
     indexes = list(kf.split(x_train))
