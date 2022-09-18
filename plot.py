@@ -329,7 +329,7 @@ def plot_boxbar_num(
     
     # creating bins from numeric variable
     ccol = gcol + "_bin"
-    df[ccol] = pd.qcut(df[gcol],bins).astype(str)
+    df[ccol] = pd.qcut(df[gcol],bins,duplicates="drop").astype(str)
 
     # sort bins
     uniques = df[ccol].unique()
